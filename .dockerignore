@@ -1,0 +1,11 @@
+target/
+.git/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.env
+*.log
+README.md
+docs/
+Birthday-Newsletter.postman_collection.json

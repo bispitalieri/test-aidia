@@ -1,0 +1,196 @@
+{
+  "info": {
+    "_postman_id": "76d9095e-c733-4cb0-a2a9-f52dd525cfe6",
+    "name": "Birthday Newsletter API",
+    "description": "Collection per provare le API del prototipo Birthday Newsletter. Le email sono simulate e visibili nei log Docker dell'applicazione.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "employeeId",
+      "value": "1"
+    },
+    {
+      "key": "sendDate",
+      "value": "2026-09-30"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check applicazione e PostgreSQL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/actuator/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dipendenti",
+      "item": [
+        {
+          "name": "Elenco dipendenti",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees"
+          }
+        },
+        {
+          "name": "Crea dipendente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const employee = pm.response.json();",
+                  "  if (employee.id) pm.collectionVariables.set('employeeId', employee.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Luca\",\n  \"lastName\": \"Neri\",\n  \"email\": \"luca.neri@example.com\",\n  \"team\": \"Platform\",\n  \"office\": \"Firenze\",\n  \"birthDate\": \"1992-06-15\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/employees"
+          }
+        },
+        {
+          "name": "Leggi dipendente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees/{{employeeId}}"
+          }
+        },
+        {
+          "name": "Aggiorna dipendente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Luca\",\n  \"lastName\": \"Neri\",\n  \"email\": \"luca.neri@example.com\",\n  \"team\": \"Platform\",\n  \"office\": \"Firenze\",\n  \"birthDate\": \"1992-06-15\",\n  \"active\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/employees/{{employeeId}}"
+          }
+        },
+        {
+          "name": "Elimina dipendente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees/{{employeeId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Configurazione",
+      "item": [
+        {
+          "name": "Leggi configurazione newsletter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/settings"
+          }
+        },
+        {
+          "name": "Aggiorna template e attivazione",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subjectTemplate\": \"Compleanni del team {team}\",\n  \"bodyTemplate\": \"Oggi ({date}) festeggiamo: {birthdays}.\",\n  \"enabled\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invio e storico",
+      "item": [
+        {
+          "name": "Invia newsletter per oggi",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/send"
+          }
+        },
+        {
+          "name": "Invia newsletter per data impostata",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/send?date={{sendDate}}"
+          }
+        },
+        {
+          "name": "Storico completo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/history"
+          }
+        },
+        {
+          "name": "Storico filtrato per data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/history?date={{sendDate}}"
+          }
+        }
+      ]
+    }
+  ]
+}

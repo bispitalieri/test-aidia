@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: birthday-newsletter
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/birthday_newsletter}
+    username: ${SPRING_DATASOURCE_USERNAME:birthday}
+    password: ${SPRING_DATASOURCE_PASSWORD:birthday}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  sql:
+    init:
+      mode: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8080
+
+newsletter:
+  schedule:
+    cron: ${NEWSLETTER_CRON:0 0 8 * * *}
+    zone: ${NEWSLETTER_ZONE:Europe/Rome}
